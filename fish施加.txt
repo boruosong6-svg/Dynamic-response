@@ -1,0 +1,40 @@
+--------------------------------------------------------------------
+new
+set fish autocreate off
+
+title 
+ x-vel. histories for plane-strain model - no artificial viscosity
+ 
+config dyn
+gen zone brick size 150 1 3 p0 0.019 0 0 &
+         p1 10 0 0 p2 0.019 0.019 0 p3 0.019 0 0.20
+def wave
+   wave = exp(-0.1842e06*(dytime-430.e-06))
+   if dytime<430.e-06 then
+      wave = 1.0
+   end_if
+   if dytime<1.0e-06 then
+      wave = 1.0e-6 * dytime
+   end_if
+end
+model mech elastic
+prop shear=34.3e6 bulk=58.6e6
+ini dens=2.8
+fix z range z -0.001 0.001
+fix z range z 0.199 0.201
+fix y range y -0.001 0.001
+fix y range y 0.018 0.020
+set dyn on
+apply nquiet range x 9.999 10.001
+apply squiet range x 9.999 10.001
+apply xvel=1 hist=@wave range x 0.0189 0.0191
+hist n=5
+hist add dytime
+hist add fish @wave
+hist add gp xvel 0.019 0 0.10
+hist add gp xvel 0.667 0 0.10
+hist add gp xvel 1.333 0 0.10
+set large
+solve age 10e-4
+save no_avisc
+return
