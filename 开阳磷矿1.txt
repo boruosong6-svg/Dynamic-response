@@ -1,0 +1,49 @@
+model mech e
+
+prop bulk  11.54e9 shear 7.25e9   range	group	砂岩
+prop bulk  11.54e9 shear 7.25e9    range	group	磷矿石
+prop bulk  15.28e9 shear 8.31e9   range	group	白云岩
+
+
+ini dens 3220 range	group	砂岩
+ini dens 3220 range	group	磷矿石
+ini dens 2810 range	group	白云岩
+
+
+
+apply szz -20e6   range x 0 240 y 0 5 z 89.9 90.1
+
+
+hist add unbal
+fix x range x -0.1  0.1
+fix x range x 239.9  240.1 
+fix y range y -0.1  0.1 
+fix y range y 4.9  5.1 
+fix z range z -0.1  0.1 
+set grav 0 0 -9.81
+solve
+save 开磷矿应力分布参数弹性平衡.sav
+
+model mohr
+
+prop bulk 12.54e9 shear 8.25e9     fric 41.94         coh 4.95e6    ten 4.46e6        range  group	砂岩
+prop bulk 12.54e9 shear 8.25e9     fric 41.94         coh 4.95e6    ten 4.46e6        range group	磷矿石
+prop bulk 16.28e9 shear 9.31e9     fric 32.27         coh 4.81e6    ten 5.61e6        range group	白云岩
+
+cyc 1000
+solve
+save 开磷矿应力分布参数平衡.sav
+
+
+
+model null range  x=170,190 y=0,5 z=30,40
+model null range  x=140,160 y=0,5 z=30,40
+model null range  x=110,130 y=0,5 z=30,40
+model null range  x=80,100 y=0,5 z=30,40
+model null range  x=50,70 y=0,5 z=30,40
+
+cyc 1000
+solve
+save 开磷矿mining.sav
+
+
