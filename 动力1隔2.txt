@@ -1,0 +1,73 @@
+set large
+ini xvel 0 yvel 0 zvel 0
+model mech null ran  x 170 190 y 0 2 z 50 60
+model mech null ran  x 80 100 y 0 2 z 50 60
+cyc 1000
+
+
+conf dyn 
+set dyn on
+
+
+
+free x y z range z 49.9 50.1 ;去除静力边界
+apply nquiet squiet dquiet ran z -0.1  0.1  ;在底部施加静态边界
+apply nquiet squiet dquiet ran z 104.9 105.1
+
+tab 1 read baopo.acc
+tab 2 read baopo.acc
+tab 3 read baopo.acc
+;
+apply nstress -1.0 hist table 3 range x 170 190 y 0 2 z 49.9 50.1
+apply dstress 1.0 hist table 1 range x 170 190 y 0 2 z 49.9 50.1
+apply sstress -1.0 hist table 2 range x 170 190 y 0 2 z 49.9 50.1
+apply nstress -1.0 hist table 3 range x 80 100 y 0 2 z 49.9 50.1
+apply dstress 1.0 hist table 1 range x 80 100 y 0 2 z 49.9 50.1
+apply sstress -1.0 hist table 2 range x 80 100 y 0 2 z 49.9 50.1
+
+apply ff;施加自由场边界
+
+ini xvel 0 yvel 0 zvel 0
+
+hist gp xacc 165 1 35      
+hist gp yacc 165 1 35 
+hist gp zacc 165 1 35 
+
+hist gp xvel 165 1 35      
+hist gp yvel 165 1 35 
+hist gp zvel 165 1 35 
+
+hist gp xvel 135 1 35  
+hist gp yvel 135 1 35 
+hist gp zvel 135 1 35 
+
+hist gp xacc 135 1 35  
+hist gp yacc 135 1 35 
+hist gp zacc 135 1 35 
+
+
+hist gp xvel 105 1 35  
+hist gp yvel 105 1 35 
+hist gp zvel 105 1 35 
+
+hist gp xacc 105 1 35  
+hist gp yacc 105 1 35 
+hist gp zacc 105 1 35 
+
+
+hist gp xvel 75 1 35  
+hist gp yvel 75 1 35 
+hist gp zvel 75 1 35 
+
+hist gp xacc 75 1 35  
+hist gp yacc 75 1 35 
+hist gp zacc 75 1 35 
+
+
+set dyn damp rayleigh 0.05 63
+hist unbal
+solve age 0.05
+
+save 动力0.05s12.sav
+
+
